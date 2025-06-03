@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stylish_app/constant/color.dart';
 import 'package:stylish_app/constant/image.dart';
-import 'package:stylish_app/constant/text.dart';
-import 'package:stylish_app/screens/home_screen.dart';
 import 'package:stylish_app/widget/custom_button.dart';
+
+import 'home_screen/screen/home_screen.dart';
 
 class GetStartedScreen extends StatelessWidget {
   const GetStartedScreen({super.key});

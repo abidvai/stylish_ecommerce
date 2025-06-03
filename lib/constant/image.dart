@@ -27,7 +27,10 @@ class AppImage {
   static const String kids = '${_basePathImages}kids.png';
   static const String mens = '${_basePathImages}mens.png';
   static const String womens = '${_basePathImages}womens.png';
-
+  static const String bannerDecoration = '${_basePathImages}bannerDecoration.png';
+  static const String offerImage = '${_basePathImages}offerImage.png';
+  static const String summerOffer = '${_basePathImages}summerOffer.png';
+  static const String womanShoe = '${_basePathImages}womanShoe.png';
   /// Logo
   static const String facebookLogo = '${_basePathLogos}facebook_logo.png';
   static const String googleLogo = '${_basePathLogos}google_logo.png';

@@ -9,12 +9,12 @@ import 'package:stylish_app/constant/text.dart';
 import 'package:stylish_app/screens/home_screen/model/home_model.dart';
 import 'package:stylish_app/screens/home_screen/model/product_model.dart';
 import 'package:stylish_app/screens/trending_product_screen.dart';
-import 'package:stylish_app/widget/outline_button.dart';
 import '../../../widget/icon_container.dart';
 import '../../../widget/item_filter_container.dart';
 import '../../../widget/product_card.dart';
 import '../widget/custom_banner_container.dart';
 import '../widget/outline_banner.dart';
+import '../widget/outline_button_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

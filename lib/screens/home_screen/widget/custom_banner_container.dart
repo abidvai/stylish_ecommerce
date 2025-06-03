@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../constant/color.dart';
-import '../../../widget/outline_button.dart';
+import 'outline_button_widget.dart';
 
 class CustomBannerContainer extends StatelessWidget {
   final String title;
