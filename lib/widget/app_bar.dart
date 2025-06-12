@@ -4,8 +4,11 @@ import 'package:stylish_app/screens/profile_screen.dart';
 
 import '../constant/color.dart';
 import '../constant/image.dart';
+import '../services/auth_service.dart';
 
 Widget appBar(BuildContext context) {
+  final userImage = AuthService.userImage;
+
   return SliverAppBar(
     backgroundColor: Colors.transparent,
     title: SvgPicture.asset(AppImage.appLogo),
@@ -35,8 +38,8 @@ Widget appBar(BuildContext context) {
             radius: 16,
             backgroundColor: Colors.green,
             child: ClipOval(
-              child: Image.asset(
-                AppImage.boy,
+              child: Image.network(
+                userImage!,
                 fit: BoxFit.cover,
                 width: 40,
                 height: 40,

@@ -10,6 +10,7 @@ import 'package:stylish_app/screens/home_screen/model/home_model.dart';
 import 'package:stylish_app/screens/home_screen/model/product_model.dart';
 import 'package:stylish_app/screens/productDetail_screen/screen/product_detail_screen.dart';
 import 'package:stylish_app/screens/trending_product_screen.dart';
+import 'package:stylish_app/services/auth_service.dart';
 import 'package:stylish_app/widget/app_bar.dart';
 import 'package:stylish_app/widget/search_bar.dart';
 import '../../../widget/icon_container.dart';

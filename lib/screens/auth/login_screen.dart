@@ -6,6 +6,7 @@ import 'package:stylish_app/constant/text.dart';
 import 'package:stylish_app/screens/auth/Signup_screen.dart';
 import 'package:stylish_app/screens/auth/forgot_screen.dart';
 import 'package:stylish_app/screens/getstarted_screen.dart';
+import 'package:stylish_app/screens/home_screen/screen/home_screen.dart';
 import 'package:stylish_app/widget/custom_logo_container.dart';
 import 'package:stylish_app/widget/custom_textInput.dart';
 
@@ -170,7 +171,18 @@ Widget _buildBottomSection(BuildContext context) {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          LogoContainer(logo: AppImage.googleLogo),
+          LogoContainer(
+            logo: AppImage.googleLogo,
+            onTap: () async {
+              final user = await AuthService.signInWithGoogle();
+              if (user != null) {
+                print('Signed in as ${user.email}');
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> HomeScreen()));
+              } else {
+                print('Google sign-in cancelled');
+              }
+            },
+          ),
           SizedBox(width: 10),
           LogoContainer(logo: AppImage.appleLogo),
           SizedBox(width: 10),
