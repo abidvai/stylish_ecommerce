@@ -14,6 +14,7 @@ class AppImage {
   static const String cart = '$_basePathIcons/shopping_cart.svg';
   static const String threeDot = '$_basePathIcons/three_dot.svg';
   static const String upDown = '$_basePathIcons/up_down.svg';
+  static const String arrowRight = '$_basePathIcons/arrowRight.svg';
 
   /// Images
   static const String onboarding_1 = '${_basePathImages}onboarding_1.svg';

@@ -9,10 +9,61 @@ import 'package:stylish_app/screens/getstarted_screen.dart';
 import 'package:stylish_app/widget/custom_logo_container.dart';
 import 'package:stylish_app/widget/custom_textInput.dart';
 
+import '../../services/auth_service.dart';
 import '../../widget/custom_button.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  bool isLoading = false;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  Future<void> login() async {
+    if (_formKey.currentState!.validate()) {
+      final email = emailController.text.trim();
+      final password = passwordController.text.trim();
+
+      setState(() {
+        isLoading = true;
+      });
+
+      try {
+        final user = await AuthService.login(email, password);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => GetStartedScreen()),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text('Login Successful'),
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: ${e.toString()}')),
+        );
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,69 +73,91 @@ class LoginScreen extends StatelessWidget {
           scrollDirection: Axis.vertical,
           child: Padding(
             padding: EdgeInsets.only(left: 19, right: 29, top: 9),
-            child: Column(
-              children: [
-                _buildTopSection(context),
-                SizedBox(height: 75),
-                _buildBottomSection(context),
-              ],
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  _buildTopSection(context),
+                  SizedBox(height: 75),
+                  _buildBottomSection(context),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
-}
 
-Widget _buildTopSection(BuildContext context) {
-  final TextEditingController email = TextEditingController();
-  final TextEditingController password = TextEditingController();
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(AppText.welcomeBack, style: TextStyle(
-        fontSize: 36,
-        fontFamily: GoogleFonts.montserrat(
-          fontWeight: FontWeight.bold
-        ).fontFamily
-      ),),
-      SizedBox(height: 36),
-      CustomTextInput(
-        controller: email,
-        prefix: Icons.person,
-        hintText: 'Username or Email',
-      ),
-      SizedBox(height: 31),
-      CustomTextInput(
-        controller: password,
-        prefix: Icons.lock,
-        suffix: Icons.remove_red_eye_outlined,
-        hintText: 'Password',
-      ),
-      SizedBox(height: 9),
-      GestureDetector(
-        onTap: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> ForgotScreen()));
-        },
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            AppText.forgetPassword,
-            style: TextStyle(
-              fontSize: 12,
-              color: AppColors.primaryColor,
-              fontFamily: GoogleFonts.montserrat().fontFamily,
+  Widget _buildTopSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppText.welcomeBack,
+          style: TextStyle(
+            fontSize: 36,
+            fontFamily:
+                GoogleFonts.montserrat(fontWeight: FontWeight.bold).fontFamily,
+          ),
+        ),
+        SizedBox(height: 36),
+        CustomTextInput(
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Email is not registered yet';
+            }
+            return null;
+          },
+          controller: emailController,
+          prefix: Icons.person,
+          hintText: 'Username or Email',
+        ),
+        SizedBox(height: 31),
+        CustomTextInput(
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Password is invalid';
+            }
+            return null;
+          },
+          controller: passwordController,
+          prefix: Icons.lock,
+          suffix: Icons.remove_red_eye_outlined,
+          hintText: 'Password',
+        ),
+        SizedBox(height: 9),
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ForgotScreen()),
+            );
+          },
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              AppText.forgetPassword,
+              style: TextStyle(
+                fontSize: 12,
+                color: AppColors.primaryColor,
+                fontFamily: GoogleFonts.montserrat().fontFamily,
+              ),
             ),
           ),
         ),
-      ),
-      SizedBox(height: 52),
-      CustomButton(buttonText: 'Login', onTap: (){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => GetStartedScreen()));
-      },),
-    ],
-  );
+        SizedBox(height: 52),
+        isLoading
+            ? Center(child: CircularProgressIndicator())
+            : CustomButton(
+              buttonText: 'Login',
+              onTap: () {
+                login();
+              },
+            ),
+      ],
+    );
+  }
 }
 
 Widget _buildBottomSection(BuildContext context) {
@@ -111,7 +184,10 @@ Widget _buildBottomSection(BuildContext context) {
           Text('Create An Account?'),
           TextButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => SignupScreen()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SignupScreen()),
+              );
             },
             child: Text(
               AppText.signup,

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stylish_app/screens/productDetail_screen/screen/product_detail_screen.dart';
 import 'package:stylish_app/widget/item_filter_container.dart';
 import 'package:stylish_app/widget/product_card.dart';
+import 'package:stylish_app/widget/search_bar.dart';
 
 import '../constant/color.dart';
 import '../constant/image.dart';
 import '../constant/text.dart';
+import '../widget/app_bar.dart';
 import 'home_screen/model/product_model.dart';
 import 'home_screen/widget/chip_widget.dart';
 
@@ -83,63 +86,11 @@ class TrendingProductScreen extends StatelessWidget {
       body: CustomScrollView(
         scrollDirection: Axis.vertical,
         slivers: [
-          SliverAppBar(
-            backgroundColor: Colors.transparent,
-            title: SvgPicture.asset(AppImage.appLogo),
-            centerTitle: true,
-            leading: Container(
-              margin: EdgeInsets.only(left: 16),
-              padding: EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.grey.withOpacity(0.4),
-              ),
-              child: SvgPicture.asset(AppImage.threeDot, width: 20, height: 20),
-            ),
-            actions: [
-              Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.green,
-                  child: ClipOval(
-                    child: Image.asset(
-                      AppImage.boy,
-                      fit: BoxFit.cover,
-                      width: 40,
-                      height: 40,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          appBar(context),
 
           /// search bar
           SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(left: 16, right: 16, top: 16),
-              child: Material(
-                elevation: 1,
-                borderRadius: BorderRadius.circular(10),
-                child: TextField(
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 12),
-                    hintText: 'Search any product..',
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                      fontFamily: GoogleFonts.montserrat().fontFamily,
-                    ),
-                    prefixIcon: Icon(Icons.search, color: Colors.grey),
-                    suffixIcon: Icon(Icons.mic_none, color: Colors.grey),
-                    border: InputBorder.none,
-                    fillColor: Colors.transparent,
-                    filled: true,
-                  ),
-                ),
-              ),
-            ),
+            child: buildSearchBar(),
           ),
 
           /// category text
@@ -153,16 +104,19 @@ class TrendingProductScreen extends StatelessWidget {
               delegate: SliverChildBuilderDelegate((context, index) {
                 final product = productList[index];
                 return ProductCard(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDetailScreen()));
+                  },
                   product: product,
                   ratingActive: true,
-                  carWidth: MediaQuery.sizeOf(context).width * .42,
+                  cardWidth: MediaQuery.sizeOf(context).width * .42,
                 );
               }, childCount: productList.length),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 2,
                 crossAxisSpacing: 5,
-                childAspectRatio: 0.62,
+                childAspectRatio: 0.53,
               ),
             ),
           ),

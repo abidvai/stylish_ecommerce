@@ -8,7 +8,10 @@ import 'package:stylish_app/constant/image.dart';
 import 'package:stylish_app/constant/text.dart';
 import 'package:stylish_app/screens/home_screen/model/home_model.dart';
 import 'package:stylish_app/screens/home_screen/model/product_model.dart';
+import 'package:stylish_app/screens/productDetail_screen/screen/product_detail_screen.dart';
 import 'package:stylish_app/screens/trending_product_screen.dart';
+import 'package:stylish_app/widget/app_bar.dart';
+import 'package:stylish_app/widget/search_bar.dart';
 import '../../../widget/icon_container.dart';
 import '../../../widget/item_filter_container.dart';
 import '../../../widget/product_card.dart';
@@ -33,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   final List<String> images = [
-    'https://images.pexels.com/photos/5710137/pexels-photo-5710137.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    'https://images.pexels.com/photos/1050244/pexels-photo-1050244.jpeg',
     'https://images.pexels.com/photos/5957/gift-brown-shopping-market.jpg?cs=srgb&dl=pexels-kaboompics-5957.jpg&fm=jpg',
     'https://images.pexels.com/photos/2601274/pexels-photo-2601274.jpeg?auto=compress&cs=tinysrgb&w=800',
   ];
@@ -71,15 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
-  final CarouselController controller = CarouselController();
 
   int currentIndex = 0;
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,55 +83,11 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColors.bgColor,
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            backgroundColor: Colors.transparent,
-            title: SvgPicture.asset(AppImage.appLogo),
-            centerTitle: true,
-            leading: IconContainer(imagePath: AppImage.threeDot,),
-            actions: [
-              Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.green,
-                  child: ClipOval(
-                    child: Image.asset(
-                      AppImage.boy,
-                      fit: BoxFit.cover,
-                      width: 40,
-                      height: 40,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          appBar(context),
 
           /// search bar
           SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(left: 16, right: 16, top: 16),
-              child: Material(
-                elevation: 1,
-                borderRadius: BorderRadius.circular(10),
-                child: TextField(
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 12),
-                    hintText: 'Search any product..',
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                      fontFamily: GoogleFonts.montserrat().fontFamily,
-                    ),
-                    prefixIcon: Icon(Icons.search, color: Colors.grey),
-                    suffixIcon: Icon(Icons.mic_none, color: Colors.grey),
-                    border: InputBorder.none,
-                    fillColor: Colors.transparent,
-                    filled: true,
-                  ),
-                ),
-              ),
-            ),
+            child: buildSearchBar()
           ),
 
           /// category text
@@ -252,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
           /// view Product List
           SliverToBoxAdapter(
             child: SizedBox(
-              height: MediaQuery.sizeOf(context).height * .35,
+              height: MediaQuery.sizeOf(context).height * .44,
               child: IntrinsicHeight(
                 child: ListView.separated(
                   padding: EdgeInsets.only(top: 16, right: 7),
@@ -266,9 +218,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Align(
                       alignment: Alignment.centerLeft,
                       child: ProductCard(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDetailScreen()));
+                        },
                         product: product,
                         ratingActive: true,
-                        carWidth: MediaQuery.sizeOf(context).width * .42,
+                        cardWidth: MediaQuery.sizeOf(context).width * .42,
                       ),
                     );
                   },
@@ -426,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           SliverToBoxAdapter(
             child: SizedBox(
-              height: MediaQuery.sizeOf(context).height * .33,
+              height: MediaQuery.sizeOf(context).height * .41,
               child: ListView.separated(
                 padding: EdgeInsets.only(top: 16, right: 16),
                 scrollDirection: Axis.horizontal,
@@ -437,9 +392,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemBuilder: (context, index) {
                   final product = productList[index];
                   return ProductCard(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDetailScreen()));
+                    },
                     product: product,
                     ratingActive: false,
-                    carWidth: MediaQuery.sizeOf(context).width * .42,
+                    cardWidth: MediaQuery.sizeOf(context).width * .42,
                   );
                 },
               ),
@@ -452,68 +410,76 @@ class _HomeScreenState extends State<HomeScreen> {
               margin: EdgeInsets.only(left: 16, right: 16),
               padding: EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.orangeAccent,
+                color: Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12),
-                    ),
-                    child: Image.asset(
-                      AppImage.summerOffer,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Padding(
-                    padding: EdgeInsets.only(left: 8, right: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+              child: Material(
+                clipBehavior: Clip.none,
+                borderRadius: BorderRadius.circular(10),
+                elevation: 1,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 20),
+                  child: Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                        child: Image.asset(
+                          AppImage.summerOffer,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Padding(
+                        padding: EdgeInsets.only(left: 8, right: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'New Arrivals',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontFamily:
-                                    GoogleFonts.montserrat(
-                                      fontWeight: FontWeight.w500,
-                                    ).fontFamily,
-                              ),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'New Arrivals',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontFamily:
+                                        GoogleFonts.montserrat(
+                                          fontWeight: FontWeight.w500,
+                                        ).fontFamily,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Summer’ 25 Collections',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily:
+                                        GoogleFonts.montserrat(
+                                          fontWeight: FontWeight.normal,
+                                        ).fontFamily,
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 4),
-                            Text(
-                              'Summer’ 25 Collections',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily:
-                                    GoogleFonts.montserrat(
-                                      fontWeight: FontWeight.normal,
-                                    ).fontFamily,
+                            Padding(
+                              padding: EdgeInsets.only(top: 26),
+                              child: OutlineButtonWidget(
+                                buttonText: 'View all',
+                                icon: Icons.arrow_forward_outlined,
+                                bgColor: AppColors.secondaryColor,
+                                borderColor: Colors.transparent,
                               ),
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 26),
-                          child: OutlineButtonWidget(
-                            buttonText: 'View all',
-                            icon: Icons.arrow_forward_outlined,
-                            bgColor: AppColors.secondaryColor,
-                            borderColor: Colors.transparent,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -523,7 +489,7 @@ class _HomeScreenState extends State<HomeScreen> {
               margin: EdgeInsets.only(
                 left: 16,
                 right: 15,
-                top: 16,
+                top: 10,
                 bottom: 100,
               ),
               padding: EdgeInsets.only(top: 8, left: 12),
