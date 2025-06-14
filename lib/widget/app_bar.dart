@@ -39,7 +39,7 @@ Widget appBar(BuildContext context) {
             backgroundColor: Colors.green,
             child: ClipOval(
               child: Image.network(
-                userImage!,
+                userImage ?? 'https://images.pexels.com/photos/32412580/pexels-photo-32412580/free-photo-of-woman-in-black-with-white-umbrella-by-tree.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
                 fit: BoxFit.cover,
                 width: 40,
                 height: 40,

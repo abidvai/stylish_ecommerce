@@ -174,17 +174,34 @@ Widget _buildBottomSection(BuildContext context) {
           LogoContainer(
             logo: AppImage.googleLogo,
             onTap: () async {
-              final user = await AuthService.signInWithGoogle();
+              final user = await AuthService.googleWithSignIn();
               if (user != null) {
                 print('Signed in as ${user.email}');
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> HomeScreen()));
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
               } else {
                 print('Google sign-in cancelled');
               }
             },
           ),
           SizedBox(width: 10),
-          LogoContainer(logo: AppImage.appleLogo),
+          LogoContainer(
+            logo: AppImage.appleLogo,
+            onTap: () async {
+              final user = await AuthService.signInWithApple();
+              if (user != null) {
+                print('Signed in as ${user.email}');
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              } else {
+                print('Google sign-in cancelled');
+              }
+            },
+          ),
           SizedBox(width: 10),
           LogoContainer(logo: AppImage.facebookLogo),
         ],
