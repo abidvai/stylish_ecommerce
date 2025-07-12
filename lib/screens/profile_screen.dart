@@ -18,7 +18,7 @@ class ProfileScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Welcome CHeif $user'),
+            Text('Welcome $user'),
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -61,10 +61,12 @@ class ProfileScreen extends StatelessWidget {
                     content: Text('User logout'),
                   ),
                 );
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
+                if(context.mounted) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                }
               },
             ),
             SizedBox(height: 30,),
@@ -93,7 +95,7 @@ class ProfileScreen extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   backgroundColor: Colors.green,
-                  content: Text('User deleted'),
+                  content: Text('Check your email for reset password'),
                 ),
               );
             },)

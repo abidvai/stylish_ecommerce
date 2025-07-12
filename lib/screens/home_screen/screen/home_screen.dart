@@ -1,24 +1,28 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:stylish_app/ProductModel.dart';
 import 'package:stylish_app/constant/color.dart';
 import 'package:stylish_app/constant/image.dart';
 import 'package:stylish_app/constant/text.dart';
 import 'package:stylish_app/screens/home_screen/model/home_model.dart';
-import 'package:stylish_app/screens/home_screen/model/product_model.dart';
+import 'package:stylish_app/screens/home_screen/model/product_category.dart';
+import 'package:stylish_app/screens/home_screen/widget/carousel_banner_section.dart';
+import 'package:stylish_app/screens/home_screen/widget/category_section.dart';
+import 'package:stylish_app/screens/home_screen/widget/summer_offer_container.dart';
 import 'package:stylish_app/screens/productDetail_screen/screen/product_detail_screen.dart';
 import 'package:stylish_app/screens/trending_product_screen.dart';
-import 'package:stylish_app/services/auth_service.dart';
+import 'package:stylish_app/services/product_service.dart';
 import 'package:stylish_app/widget/app_bar.dart';
 import 'package:stylish_app/widget/search_bar.dart';
-import '../../../widget/icon_container.dart';
+
 import '../../../widget/item_filter_container.dart';
 import '../../../widget/product_card.dart';
 import '../widget/custom_banner_container.dart';
 import '../widget/outline_banner.dart';
 import '../widget/outline_button_widget.dart';
+import '../widget/sponsor_container.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,55 +32,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<HomeModel> category = [
-    HomeModel(title: 'Beauty', imagePath: AppImage.beauty),
-    HomeModel(title: 'Fashion', imagePath: AppImage.fashion),
-    HomeModel(title: 'Kids', imagePath: AppImage.kids),
-    HomeModel(title: 'Mens', imagePath: AppImage.mens),
-    HomeModel(title: 'Womens', imagePath: AppImage.womens),
-  ];
-
   final List<String> images = [
     'https://images.pexels.com/photos/1050244/pexels-photo-1050244.jpeg',
     'https://images.pexels.com/photos/5957/gift-brown-shopping-market.jpg?cs=srgb&dl=pexels-kaboompics-5957.jpg&fm=jpg',
     'https://images.pexels.com/photos/2601274/pexels-photo-2601274.jpeg?auto=compress&cs=tinysrgb&w=800',
   ];
 
-  final List<ProductModel> productList = [
-    ProductModel(
-      imagePath:
-          'https://images.pexels.com/photos/1537671/pexels-photo-1537671.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-      title: 'Women Printed Kurta',
-      description: 'Neque porro quisquam est qui dolorem ipsum quia',
-      price: '₹1500',
-      depricatedPrice: '₹2499',
-      offerText: '40%Off',
-      ratingCount: '56890',
-    ),
-    ProductModel(
-      imagePath:
-          'https://images.pexels.com/photos/20791989/pexels-photo-20791989/free-photo-of-woman-standing-in-white-traditional-clothing-and-shawl-in-front-of-doorway.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-      title: 'Women Printed Kurta',
-      description: 'Neque porro quisquam est qui dolorem ipsum quia',
-      price: '₹1500',
-      depricatedPrice: '₹2499',
-      offerText: '40%Off',
-      ratingCount: '56890',
-    ),
-    ProductModel(
-      imagePath:
-          'https://images.pexels.com/photos/2759783/pexels-photo-2759783.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-      title: 'Women Printed Kurta',
-      description: 'Neque porro quisquam est qui dolorem ipsum quia',
-      price: '₹1500',
-      depricatedPrice: '₹2499',
-      offerText: '40%Off',
-      ratingCount: '56890',
-    ),
-  ];
-
-
   int currentIndex = 0;
+
+  late Future<ProductOfModel> futureProducts;
+  late Future<List<ProductCategory>> futureCategory;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    futureProducts = ProductService.getProducts();
+    futureCategory = ProductService.getCategory();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,9 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
           appBar(context),
 
           /// search bar
-          SliverToBoxAdapter(
-            child: buildSearchBar()
-          ),
+          SliverToBoxAdapter(child: buildSearchBar()),
 
           /// category text
           SliverToBoxAdapter(
@@ -98,33 +69,58 @@ class _HomeScreenState extends State<HomeScreen> {
 
           /// category widget
           SliverToBoxAdapter(
-            child: Container(
-              margin: EdgeInsets.only(left: 16),
-              height: MediaQuery.sizeOf(context).height * .12,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
-              ),
-              child: ListView.separated(
-                padding: EdgeInsets.only(left: 8, top: 14),
-                scrollDirection: Axis.horizontal,
-                itemCount: category.length,
-                separatorBuilder: (context, index) {
-                  return SizedBox(width: 16);
-                },
-                itemBuilder: (context, index) {
-                  final productCategory = category[index];
-                  return Container(
-                    decoration: BoxDecoration(shape: BoxShape.circle),
-                    child: Column(
-                      children: [
-                        Image.asset(productCategory.imagePath),
-                        Text(productCategory.title),
-                      ],
-                    ),
-                  );
-                },
-              ),
+            child: FutureBuilder<List<ProductCategory>>(
+              future: futureCategory,
+              builder: (context, snapshot) {
+                print('Building FutureBuilder. ConnectionState: ${snapshot.connectionState}');
+                print('Has error: ${snapshot.hasError}');
+                print('Has data: ${snapshot.hasData}');
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  print('Showing loading indicator');
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  print('Error: ${snapshot.error}');
+                  return Center(child: Text("Error loading categories"));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  print('No data available');
+                  return Center(child: Text("No categories found"));
+                }
+
+                final categories = snapshot.data!;
+                print('Categories loaded: ${categories.length} items');
+                print('First category: ${categories.isNotEmpty ? categories[0].name : "N/A"}');
+
+                return Container(
+                  margin: EdgeInsets.only(left: 16),
+                  height: MediaQuery.sizeOf(context).height * .12,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                  ),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.only(left: 8, top: 14),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categories.length,
+                    separatorBuilder: (context, index) {
+                      return SizedBox(width: 16);
+                    },
+                    itemBuilder: (context, index) {
+
+                      final category = categories[index];
+                      return Container(
+                        width: 100,
+                        alignment: Alignment.center,
+                        child: Text(
+                          category.slug ?? 'NO Category',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
           ),
 
@@ -207,25 +203,42 @@ class _HomeScreenState extends State<HomeScreen> {
             child: SizedBox(
               height: MediaQuery.sizeOf(context).height * .44,
               child: IntrinsicHeight(
-                child: ListView.separated(
-                  padding: EdgeInsets.only(top: 16, right: 7),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: productList.length,
-                  separatorBuilder: (index, context) {
-                    return SizedBox(width: 12);
-                  },
-                  itemBuilder: (context, index) {
-                    final product = productList[index];
-                    return Align(
-                      alignment: Alignment.centerLeft,
-                      child: ProductCard(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDetailScreen()));
-                        },
-                        product: product,
-                        ratingActive: true,
-                        cardWidth: MediaQuery.sizeOf(context).width * .42,
-                      ),
+                child: FutureBuilder(
+                  future: futureProducts,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData) {
+                      return const Center(child: Text('No products found'));
+                    }
+
+                    final products = snapshot.data!.products;
+
+                    return ListView.separated(
+                      padding: EdgeInsets.only(top: 16, right: 16),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: products!.length,
+                      separatorBuilder: (context, index) {
+                        return SizedBox(width: 16);
+                      },
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return ProductCard(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetailScreen(),
+                              ),
+                            );
+                          },
+                          product: product,
+                          ratingActive: false,
+                          cardWidth: MediaQuery.sizeOf(context).width * .42,
+                        );
+                      },
                     );
                   },
                 ),
@@ -373,8 +386,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: 'Trending Products ',
                 icon: Icons.calendar_month_outlined,
                 description: 'Last Date 29/02/22',
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => TrendingProductScreen()));
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TrendingProductScreen(),
+                    ),
+                  );
                 },
               ),
             ),
@@ -383,22 +401,42 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverToBoxAdapter(
             child: SizedBox(
               height: MediaQuery.sizeOf(context).height * .41,
-              child: ListView.separated(
-                padding: EdgeInsets.only(top: 16, right: 16),
-                scrollDirection: Axis.horizontal,
-                itemCount: productList.length,
-                separatorBuilder: (context, index) {
-                  return SizedBox(width: 16);
-                },
-                itemBuilder: (context, index) {
-                  final product = productList[index];
-                  return ProductCard(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDetailScreen()));
+              child: FutureBuilder(
+                future: futureProducts,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData) {
+                    return const Center(child: Text('No products found'));
+                  }
+
+                  final products = snapshot.data!.products;
+
+                  return ListView.separated(
+                    padding: EdgeInsets.only(top: 16, right: 16),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: products!.length,
+                    separatorBuilder: (context, index) {
+                      return SizedBox(width: 16);
                     },
-                    product: product,
-                    ratingActive: false,
-                    cardWidth: MediaQuery.sizeOf(context).width * .42,
+                    itemBuilder: (context, index) {
+                      final product = products[index];
+                      return ProductCard(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductDetailScreen(),
+                            ),
+                          );
+                        },
+                        product: product,
+                        ratingActive: false,
+                        cardWidth: MediaQuery.sizeOf(context).width * .42,
+                      );
+                    },
                   );
                 },
               ),
@@ -406,192 +444,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           /// summer offer
-          SliverToBoxAdapter(
-            child: Container(
-              margin: EdgeInsets.only(left: 16, right: 16),
-              padding: EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Material(
-                clipBehavior: Clip.none,
-                borderRadius: BorderRadius.circular(10),
-                elevation: 1,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 20),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
-                        ),
-                        child: Image.asset(
-                          AppImage.summerOffer,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Padding(
-                        padding: EdgeInsets.only(left: 8, right: 12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'New Arrivals',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontFamily:
-                                        GoogleFonts.montserrat(
-                                          fontWeight: FontWeight.w500,
-                                        ).fontFamily,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'Summer’ 25 Collections',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontFamily:
-                                        GoogleFonts.montserrat(
-                                          fontWeight: FontWeight.normal,
-                                        ).fontFamily,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 26),
-                              child: OutlineButtonWidget(
-                                buttonText: 'View all',
-                                icon: Icons.arrow_forward_outlined,
-                                bgColor: AppColors.secondaryColor,
-                                borderColor: Colors.transparent,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
+          SliverToBoxAdapter(child: summerOfferContainer()),
 
-          SliverToBoxAdapter(
-            child: Container(
-              margin: EdgeInsets.only(
-                left: 16,
-                right: 15,
-                top: 10,
-                bottom: 100,
-              ),
-              padding: EdgeInsets.only(top: 8, left: 12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Sponserd'),
-                  SizedBox(height: 12),
-                  Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          'https://images.pexels.com/photos/137603/pexels-photo-137603.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-                        ),
-                      ),
-                      Positioned(
-                        left: MediaQuery.of(context).size.width * 0.20,
-                        top: MediaQuery.of(context).size.height * 0.02,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 50,
-                              child: Divider(thickness: 2, color: Colors.white),
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              'UP TO',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontFamily:
-                                    GoogleFonts.montserrat(
-                                      fontWeight: FontWeight.bold,
-                                    ).fontFamily,
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            SizedBox(
-                              width: 50,
-                              child: Divider(thickness: 2, color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        left:
-                            MediaQuery.of(context).size.width *
-                            0.29, // 30% from left
-                        top:
-                            MediaQuery.of(context).size.height *
-                            0.06, // 2% from top
-                        child: Text(
-                          '50% OFF',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            fontFamily:
-                                GoogleFonts.montserrat(
-                                  fontWeight: FontWeight.bold,
-                                ).fontFamily,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: MediaQuery.of(context).size.height * .1,
-                        left: MediaQuery.of(context).size.width * 0.30,
-                        child: SizedBox(
-                          width: 100,
-                          child: Divider(thickness: 2, color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'up to 50% Off',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontFamily:
-                              GoogleFonts.montserrat(
-                                fontWeight: FontWeight.bold,
-                              ).fontFamily,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 16),
-                        child: Icon(Icons.arrow_forward_ios_rounded, size: 20),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+          SliverToBoxAdapter(child: sponsorContainer(context)),
         ],
       ),
     );

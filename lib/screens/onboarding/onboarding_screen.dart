@@ -13,7 +13,6 @@ class OnboardingScreen extends StatelessWidget {
     OnboardingController(),
   );
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +24,7 @@ class OnboardingScreen extends StatelessWidget {
               _buildTopSection(onboardingController, context),
               Expanded(
                 child: PageView(
-                  // physics: NeverScrollableScrollPhysics(),
+                  physics: NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.horizontal,
                   controller: onboardingController.controller,
                   onPageChanged: (index) {
@@ -43,16 +42,25 @@ class OnboardingScreen extends StatelessWidget {
   }
 }
 
-Widget _buildTopSection(OnboardingController onboardingController, BuildContext context) {
+Widget _buildTopSection(
+  OnboardingController onboardingController,
+  BuildContext context,
+) {
   return Obx(() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('${onboardingController.currentPage.value + 1}/3'),
-        TextButton(onPressed: (){
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-        }, child: Text(AppText.skip))
-        ],
+        TextButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
+          },
+          child: Text(AppText.skip),
+        ),
+      ],
     );
   });
 }
@@ -99,7 +107,10 @@ Widget getOrder() {
   );
 }
 
-Widget _buildBottomSection(OnboardingController onboardingController, BuildContext context) {
+Widget _buildBottomSection(
+  OnboardingController onboardingController,
+  BuildContext context,
+) {
   return Obx(
     () => Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -109,15 +120,16 @@ Widget _buildBottomSection(OnboardingController onboardingController, BuildConte
               onPressed: onboardingController.previousPage,
               child: Text(AppText.prev),
             )
-            : SizedBox(width: 60,),
+            : SizedBox(width: 60),
         Expanded(
           child: Align(
             alignment: Alignment.center,
-             child: Row(
-               mainAxisSize: MainAxisSize.min,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 ...List.generate(3, (index) {
-                  final isActive = onboardingController.currentPage.value == index;
+                  final isActive =
+                      onboardingController.currentPage.value == index;
                   return AnimatedContainer(
                     margin: EdgeInsets.all(5),
                     width: isActive ? 40 : 8,
@@ -134,9 +146,15 @@ Widget _buildBottomSection(OnboardingController onboardingController, BuildConte
           ),
         ),
         onboardingController.currentPage >= 2
-            ? TextButton(onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-        }, child: Text(AppText.started))
+            ? TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
+              },
+              child: Text(AppText.started),
+            )
             : TextButton(
               onPressed: () {
                 onboardingController.nextPage();

@@ -1,10 +1,10 @@
-import 'dart:ffi';
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stylish_app/ProductModel.dart';
 
-import '../screens/home_screen/model/product_model.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({
@@ -15,7 +15,7 @@ class ProductCard extends StatelessWidget {
     this.onTap,
   });
 
-  final ProductModel product;
+  final Products product;
   final bool ratingActive;
   final double cardWidth;
   final VoidCallback? onTap;
@@ -46,7 +46,7 @@ class ProductCard extends StatelessWidget {
                 bottomLeft: Radius.circular(6),
               ),
               child: Image.network(
-                product.imagePath,
+                product.thumbnail!,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: max(100, MediaQuery.sizeOf(context).height) * .20,
@@ -58,7 +58,7 @@ class ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product.title,
+                    product.title!,
                     style: TextStyle(
                       fontSize: 12,
                       fontFamily:
@@ -69,7 +69,7 @@ class ProductCard extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    product.description,
+                    product.description!,
                     maxLines: 2,
                     style: TextStyle(
                       overflow: TextOverflow.ellipsis,
@@ -81,8 +81,7 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 4),
-                  Text(
-                    product.price,
+                  Text('${product.price}',
                     style: TextStyle(
                       fontSize: 12,
                       fontFamily:
@@ -95,7 +94,7 @@ class ProductCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        product.depricatedPrice,
+                        '${product.discountPercentage}',
                         style: TextStyle(
                           color: Colors.black.withOpacity(0.4),
                           fontSize: 12,
@@ -109,7 +108,7 @@ class ProductCard extends StatelessWidget {
                       ),
                       SizedBox(width: 4),
                       Text(
-                        product.offerText,
+                        'hardcore 40%',
                         style: TextStyle(
                           fontSize: 12,
                           fontFamily:
@@ -137,7 +136,7 @@ class ProductCard extends StatelessWidget {
                         ),
                         SizedBox(width: 4),
                         Text(
-                          product.ratingCount,
+                          '200',
                           style: TextStyle(color: Colors.black.withOpacity(0.5)),
                         ),
                       ],

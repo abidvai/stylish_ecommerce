@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stylish_app/screens/auth/splash_screen.dart';
-import 'package:stylish_app/screens/productDetail_screen/screen/product_detail_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
